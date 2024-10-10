@@ -139,7 +139,9 @@ module.exports = (wss) => {
         console.log(data,'ddddddddddddddddddd')
         switch (data.type) {
           case 'joinGroup':
-            const { groupId } = data; // Extract groupId from the incoming data
+               const { groupId, senderId } = data; // Extract data
+
+            // const { groupId } = data; // Extract groupId from the incoming data
 
             // Create a new Set for the group if it doesn't exist
             if (!clients.has(groupId)) {
@@ -150,7 +152,8 @@ module.exports = (wss) => {
             break;
 
           case 'sendMessage':
-            const { groupId: groupIdSend, content, image, video, document } = data;
+            const { groupId: groupIdSend,senderId: senderIdSend, content, image, video, document } = data;
+            
 
             // Ensure at least one of content, image, video, or document is provided
             if (!content && !image && !video && !document) {
@@ -162,6 +165,8 @@ module.exports = (wss) => {
             const response = {
               type: 'receiveMessage',
               content: content || '',
+              groupId: groupIdSend || '',
+              senderId: senderIdSend || '',              
               image: image || '',
               video: video || '',
               document: document || '',
