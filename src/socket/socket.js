@@ -122,8 +122,7 @@
 // };
 
 
-// src/socket/socket.js
-const WebSocket = require('ws');
+// src/socket/socket.const WebSocket = require('ws');
 const UserModel = require('../schema/userSchema'); // Import the User schema
 
 // Function to handle WebSocket connections
@@ -140,55 +139,58 @@ module.exports = (wss) => {
 
         switch (data.type) {
           case 'joinGroup':
-            const { groupId } = data; // Extract groupId from the incoming data
-
-            // Create a new Set for the group if it doesn't exist
-            if (!clients.has(groupId)) {
-              clients.set(groupId, new Set());
+            {
+              const { groupId } = data; // Extract groupId from the incoming data
+              // Create a new Set for the group if it doesn't exist
+              if (!clients.has(groupId)) {
+                clients.set(groupId, new Set());
+              }
+              clients.get(groupId).add(ws); // Add the client to the group
+              console.log(`Client joined group: ${groupId}`);
             }
-            clients.get(groupId).add(ws); // Add the client to the group
-            console.log(`Client joined group: ${groupId}`);
             break;
 
           case 'sendMessage':
-            const { senderId, content, image, video, document } = data;
-            
-            // Fetch sender details from the database (await is correctly used inside async function)
-            const userData = await UserModel.findById(senderId); 
+            {
+              const { groupId, senderId, content, image, video, document } = data;
+              
+              // Fetch sender details from the database (await is correctly used inside async function)
+              const userData = await UserModel.findById(senderId); 
 
-            if (!userData) {
-              ws.send(JSON.stringify({ error: 'User not found' }));
-              return;
-            }
+              if (!userData) {
+                ws.send(JSON.stringify({ error: 'User not found' }));
+                return;
+              }
 
-            // Ensure at least one of content, image, video, or document is provided
-            if (!content && !image && !video && !document) {
-              ws.send(JSON.stringify({ error: 'At least one of content, image, video, or document must be provided' }));
-              return;
-            }
+              // Ensure at least one of content, image, video, or document is provided
+              if (!content && !image && !video && !document) {
+                ws.send(JSON.stringify({ error: 'At least one of content, image, video, or document must be provided' }));
+                return;
+              }
 
-            // Create a response object for the message
-            const response = {
-              type: 'receiveMessage',
-              content: content || '',
-              groupId: groupId || '',
-              senderId: senderId || '', 
-              fullname: userData.fullname || '',
-              profileImage: userData.profileImage || '',            
-              image: image || '',
-              video: video || '',
-              document: document || '',
-              timestamp: new Date(),
-            };
+              // Create a response object for the message
+              const response = {
+                type: 'receiveMessage',
+                content: content || '',
+                groupId: groupId || '',
+                senderId: senderId || '', 
+                fullname: userData.fullname || '',
+                profileImage: userData.profileImage || '',            
+                image: image || '',
+                video: video || '',
+                document: document || '',
+                timestamp: new Date(),
+              };
 
-            // Broadcast the new message to everyone in the group
-            const groupClients = clients.get(groupId);
-            if (groupClients) {
-              groupClients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                  client.send(JSON.stringify(response)); // Send the message to each client
-                }
-              });
+              // Broadcast the new message to everyone in the group
+              const groupClients = clients.get(groupId);
+              if (groupClients) {
+                groupClients.forEach(client => {
+                  if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(response)); // Send the message to each client
+                  }
+                });
+              }
             }
             break;
 
@@ -219,4 +221,3 @@ module.exports = (wss) => {
     ws.send(JSON.stringify({ type: 'welcome', message: 'Welcome to the WebSocket server!' }));
   });
 };
-
