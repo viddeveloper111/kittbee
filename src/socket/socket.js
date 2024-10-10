@@ -86,8 +86,7 @@ module.exports = (wss) => {
 
         switch (data.type) {
           case 'joinGroup':
-            const { groupId, senderId, fullname } = data; // Extract data
-            console.log(`${fullname} joined group: ${groupId}`);
+            const { groupId, senderId } = data; // Extract data
 
             if (!clients.has(groupId)) {
               clients.set(groupId, new Set()); // Create a new Set for groupId if it doesn't exist
@@ -130,7 +129,7 @@ module.exports = (wss) => {
             await messageDoc.save();
 
             // Populate senderId details for the new message
-            await messageDoc.populate('messages.senderId', 'fullname');
+            // await messageDoc.populate('messages.senderId', 'fullname');
 
             // Get the last message added to the array
             const newMessage = messageDoc.messages[messageDoc.messages.length - 1];
@@ -138,7 +137,6 @@ module.exports = (wss) => {
             // Create a response object
             const response = {
               type: 'receiveMessage',
-              fullname: newMessage.senderId.fullname,
               content: newMessage.content || '',
               image: newMessage.image || '',
               video: newMessage.video || '',
@@ -146,6 +144,8 @@ module.exports = (wss) => {
               timestamp: newMessage.timestamp,
               _id: newMessage._id
             };
+          console.log(groupIdSend);
+          
 
             // Broadcast the new message to everyone in the group
             clients.get(groupIdSend).forEach(client => {
