@@ -160,7 +160,7 @@ module.exports = (wss) => {
         }
       } catch (error) {
         console.error("Error processing message:", error);
-        ws.send(JSON.stringify({ error: 'Failed to process message' }));
+        ws.send(JSON.stringify({ error: 'Failed to process message',errors:error }));
       }
     });
 
