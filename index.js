@@ -46,20 +46,20 @@ server.listen(port, () => {
 });
 
 // Handle WebSocket connections
-wss.on('connection', (ws) => {
-  console.log('A client connected.');
+// wss.on('connection', (ws) => {
+//   console.log('A client connected.');
 
-  ws.on('message', (message) => {
-    console.log('Received:', message);
-    // Handle incoming messages and optionally respond
-  });
+//   ws.on('message', (message) => {
+//     console.log('Received:', message);
+//     // Handle incoming messages and optionally respond
+//   });
 
-  ws.on('close', () => {
-    console.log('A client disconnected.');
-  });
+//   ws.on('close', () => {
+//     console.log('A client disconnected.');
+//   });
 
-  ws.send('Welcome to the WebSocket server!'); // Example message to the client
-});
+//   ws.send('Welcome to the WebSocket server!'); // Example message to the client
+// });
 
 
 // const dotenv = require('dotenv');
