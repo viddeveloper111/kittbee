@@ -123,6 +123,8 @@
 
 
 // src/socket/socket.const WebSocket = require('ws');
+ const WebSocket = require('ws');
+
 const UserModel = require('../schema/userSchema'); // Import the User schema
 
 // Function to handle WebSocket connections
