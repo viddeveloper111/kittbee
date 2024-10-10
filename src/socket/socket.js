@@ -123,8 +123,7 @@
 
 
 // src/socket/socket.const WebSocket = require('ws');
- const WebSocket = require('ws');
-
+const WebSocket = require('ws');
 const UserModel = require('../schema/userSchema'); // Import the User schema
 
 // Function to handle WebSocket connections
@@ -184,12 +183,12 @@ module.exports = (wss) => {
                 timestamp: new Date(),
               };
 
-              // Broadcast the new message to everyone in the group
+              // Broadcast the new message to everyone in the group except the sender
               const groupClients = clients.get(groupId);
               if (groupClients) {
                 groupClients.forEach(client => {
-                  if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(response)); // Send the message to each client
+                  if (client.readyState === WebSocket.OPEN && client !== ws) {
+                    client.send(JSON.stringify(response)); // Send the message to each client except the sender
                   }
                 });
               }
