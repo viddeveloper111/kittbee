@@ -144,15 +144,23 @@ module.exports = (wss) => {
               timestamp: newMessage.timestamp,
               _id: newMessage._id
             };
-          console.log(groupIdSend);
+          console.log(groupIdSend,'ggg');
+          console.log(senderIdSend,'sss');
+          console.log(typeof(senderIdSend),'tttt');
+
+
           
 
             // Broadcast the new message to everyone in the group
-            clients.get(groupIdSend).forEach(client => {
-              if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(response));
-              }
-            });
+            // clients.get(groupIdSend).forEach(client => {
+            //   if (client.readyState === WebSocket.OPEN) {
+            //     client.send(JSON.stringify(response));
+            //   }
+            // });
+            const client = clients.get(groupIdSend);
+if (client && client.readyState === WebSocket.OPEN) {
+  client.send(JSON.stringify(response));
+}
             break;
 
           default:
