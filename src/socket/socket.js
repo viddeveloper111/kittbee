@@ -153,7 +153,7 @@ module.exports = (wss) => {
 
           case 'sendMessage':
             {
-              const { groupId, senderId, content, image, video, document } = data;
+              const { groupId, senderId, content, image, video, document, pollOptions } = data;
               
               // Fetch sender details from the database (await is correctly used inside async function)
               const userData = await UserModel.findById(senderId); 
@@ -164,8 +164,8 @@ module.exports = (wss) => {
               }
 
               // Ensure at least one of content, image, video, or document is provided
-              if (!content && !image && !video && !document) {
-                ws.send(JSON.stringify({ error: 'At least one of content, image, video, or document must be provided' }));
+              if (!content && !image && !video && !document && !pollOptions) {
+                ws.send(JSON.stringify({ error: 'At least one of content, image, video, document and poll options must be provided' }));
                 return;
               }
 
@@ -219,6 +219,6 @@ module.exports = (wss) => {
     });
 
     // Send a welcome message to the client
-    ws.send(JSON.stringify({ type: 'welcome', message: 'Welcome to the WebSocket server!' }));
+    ws.send(JSON.stringify({ type: 'welcome', message: 'Welcome to the WebSocket server! socket' }));
   });
 };
