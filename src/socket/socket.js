@@ -179,7 +179,9 @@ module.exports = (wss) => {
                 profileImage: userData.profileImage || '',            
                 image: image || '',
                 video: video || '',
-                document: document || '',
+                document: document || '', 
+                poll:pollOptions || '',
+                pollOptions:pollOptions || '',
                 timestamp: new Date(),
               };
 
