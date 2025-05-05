@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const messageArray = new Schema({
 
   senderId: { type: Schema.Types.ObjectId, ref: 'Users' },
+  mentions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   content: { type: String, default: '' },
   image: { type: String, default: '' },
   video: { type: String, default: '' },
