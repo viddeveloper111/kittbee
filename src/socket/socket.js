@@ -121,8 +121,6 @@
 //   });
 // };
 
-
-// src/socket/socket.const WebSocket = require('ws');
 const WebSocket = require('ws');
 const UserModel = require('../schema/userSchema'); // Import the User schema
 
@@ -154,6 +152,16 @@ module.exports = (wss) => {
           case 'sendMessage':
             {
               const { groupId, senderId, content, image, video, document, pollOptions } = data;
+                  // Utility to extract @mentions from content
+            const extractMentions = (text) => {
+              const regex = /@([\w\s]+)/g; // matches @Full Name with spaces
+              const mentions = [];
+              let match;
+              while ((match = regex.exec(text)) !== null) {
+                mentions.push(match[1].trim());
+              }
+              return mentions;
+            }
               
               // Fetch sender details from the database (await is correctly used inside async function)
               const userData = await UserModel.findById(senderId); 
@@ -169,6 +177,11 @@ module.exports = (wss) => {
                 return;
               }
 
+              const mentionedFullnames = extractMentions(content || "");
+              const mentionedUsers = await UserModel.find({ fullname: { $in: mentionedFullnames } }).select("_id fullname");
+              const mentionedUserIds = mentionedUsers.map(u => u._id.toString());
+  
+  
               // Create a response object for the message
               const response = {
                 type: 'receiveMessage',
@@ -182,6 +195,7 @@ module.exports = (wss) => {
                 document: document || '', 
                 poll:pollOptions || '',
                 pollOptions:pollOptions || '',
+                mentions: mentionedUserIds,
                 timestamp: new Date(),
               };
 
