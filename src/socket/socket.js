@@ -151,7 +151,7 @@ module.exports = (wss) => {
 
           case 'sendMessage':
             {
-              const { groupId, senderId, content, image, video, document, pollOptions } = data;
+              const { groupId, senderId, content, image, video, document, pollOptions,message } = data;
                   // Utility to extract @mentions from content
             const extractMentions = (text) => {
               const regex = /@([\w\s]+)/g; // matches @Full Name with spaces
@@ -198,7 +198,9 @@ module.exports = (wss) => {
                 mentions: mentionedUserIds,
                 timestamp: new Date(),
               };
-
+if (message && message.trim() !== '') {
+      response.message = message;
+    }
               // Broadcast the new message to everyone in the group except the sender
               const groupClients = clients.get(groupId);
               if (groupClients) {
