@@ -127,7 +127,7 @@ const UserModel = require('../schema/userSchema'); // Import the User schema
 // Function to handle WebSocket connections
 module.exports = (wss) => {
   const clients = new Map(); // Map to store WebSocket clients by groupId
-
+global.clients = clients;
   wss.on('connection', (ws) => {
     console.log('New client connected');
 
