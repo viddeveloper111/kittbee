@@ -3,9 +3,9 @@ const VenueReviewSchema = require('../../schema/venueReviewSchema');
 const NotificationSchema = require('../../schema/notificationSchema');
 const UserSchema = require('../../schema/userSchema');
 const GroupSchema = require('../../schema/groupSchema');
-const Message = require("../../schema/messageSchema");
+// const Message = require("../../schema/messageSchema");
 const mongoose = require("mongoose");
-const WebSocket = require('ws');
+// const WebSocket = require('ws');
 
 
 
@@ -178,66 +178,61 @@ exports.addKitty = async (req, res) => {
     // Save the new Kitty to the database
     await newKitty.save();
 
-    const sender = await UserSchema.findById(userId).select('fullname');
+//     const sender = await UserSchema.findById(userId).select('fullname');
 
 
-  // const newMessage = {
-  //   senderId: userId,
-  //   name: sender.fullname || "Unknown User",
-  //   message: `${sender.fullname} created a new kitty: ${newKitty.name}`,
-  //   timestamp: Date.now(),
-  // };
-  const newMessage = {
-  senderId: userId,
-  message: `${sender.fullname} created a new kitty: ${newKitty.name}`,
-  timestamp: Date.now(),
-};
+
+//   const newMessage = {
+//   senderId: userId,
+//   message: `${sender.fullname} created a new kitty: ${newKitty.name}`,
+//   timestamp: Date.now(),
+// };
 
 
- let messageDoc = await Message.findOne({ groupId });
+//  let messageDoc = await Message.findOne({ groupId });
 
-    if (!messageDoc) {
-      messageDoc = new Message({
-        groupId,
-        messages: [newMessage],
-      });
-    } else {
-      messageDoc.messages.push(newMessage);
-    }
-  await messageDoc.save();
+//     if (!messageDoc) {
+//       messageDoc = new Message({
+//         groupId,
+//         messages: [newMessage],
+//       });
+//     } else {
+//       messageDoc.messages.push(newMessage);
+//     }
+//   await messageDoc.save();
 
 
-  await Message.findOneAndUpdate(
-      { groupId },
-      { $push: { message: newMessage } },
-      { upsert: true, new: true }
-    );
+//   await Message.findOneAndUpdate(
+//       { groupId },
+//       { $push: { message: newMessage } },
+//       { upsert: true, new: true }
+//     );
 
-  if (global.clients && global.clients.has(groupId)) {
-      const groupClients = global.clients.get(groupId);
-      const response = {
-        type: 'receiveMessage',
-        // content: newMessage.content,
-        // content: '',
+//   if (global.clients && global.clients.has(groupId)) {
+//       const groupClients = global.clients.get(groupId);
+//       const response = {
+//         type: 'receiveMessage',
+//         // content: newMessage.content,
+//         // content: '',
 
-        groupId,
-      senderId: userId,
-        profileImage: '',
-        image: '',
-        video: '',
-        document: '',
-        message: newMessage.message, 
-        mentions: [],
-           timestamp: Date.now(),
+//         groupId,
+//       senderId: userId,
+//         profileImage: '',
+//         image: '',
+//         video: '',
+//         document: '',
+//         message: newMessage.message, 
+//         mentions: [],
+//            timestamp: Date.now(),
 
-      };
+//       };
 
-      groupClients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(response));
-        }
-      });
-    }
+//       groupClients.forEach(client => {
+//         if (client.readyState === WebSocket.OPEN) {
+//           client.send(JSON.stringify(response));
+//         }
+//       });
+//     }
     res.status(201).json({ message: "Kitty added successfully", data: newKitty });
   
   } catch (err) {

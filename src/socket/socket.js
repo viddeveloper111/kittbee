@@ -127,7 +127,7 @@ const UserModel = require('../schema/userSchema'); // Import the User schema
 
 module.exports = (wss) => {
   const clients = new Map(); 
- global.clients = clients;
+//  global.clients = clients;
   wss.on('connection', (ws) => {
     console.log('New client connected');
 
@@ -163,13 +163,13 @@ module.exports = (wss) => {
               return mentions;
             }
               
-              // Fetch sender details from the database (await is correctly used inside async function)
-              const userData = await UserModel.findById(senderId); 
+              // // Fetch sender details from the database (await is correctly used inside async function)
+              // const userData = await UserModel.findById(senderId); 
 
-              if (!userData) {
-                ws.send(JSON.stringify({ error: 'User not found' }));
-                return;
-              }
+              // if (!userData) {
+              //   ws.send(JSON.stringify({ error: 'User not found' }));
+              //   return;
+              // }
 
               // Ensure at least one of content, image, video, or document is provided
               if (!content && !image && !video && !document && !pollOptions) {
@@ -198,6 +198,7 @@ module.exports = (wss) => {
                 mentions: mentionedUserIds,
                 timestamp: new Date(),
               };
+
 if (message && message.trim() !== '') {
       response.message = message;
     }

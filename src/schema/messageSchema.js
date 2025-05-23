@@ -10,7 +10,7 @@ const messageArray = new Schema({
   video: { type: String, default: '' },
   document: { type: String, default: '' },
   timestamp: { type: Date, default: Date.now },
-  message: { type: String,}, // Store name
+  // message: { type: String,}, // Store name
 
 })
 
