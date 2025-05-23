@@ -3,8 +3,10 @@ const VenueReviewSchema = require('../../schema/venueReviewSchema');
 const NotificationSchema = require('../../schema/notificationSchema');
 const UserSchema = require('../../schema/userSchema');
 const GroupSchema = require('../../schema/groupSchema');
-
+const Message = require("../../schema/messageSchema");
 const mongoose = require("mongoose");
+const WebSocket = require('ws');
+
 
 
 
@@ -176,28 +178,68 @@ exports.addKitty = async (req, res) => {
     // Save the new Kitty to the database
     await newKitty.save();
 
-    // Send success response
+    const sender = await UserSchema.findById(userId).select('fullname');
+
+
+  // const newMessage = {
+  //   senderId: userId,
+  //   name: sender.fullname || "Unknown User",
+  //   message: `${sender.fullname} created a new kitty: ${newKitty.name}`,
+  //   timestamp: Date.now(),
+  // };
+  const newMessage = {
+  senderId: userId,
+  message: `${sender.fullname} created a new kitty: ${newKitty.name}`,
+  timestamp: Date.now(),
+};
+
+
+ let messageDoc = await Message.findOne({ groupId });
+
+    if (!messageDoc) {
+      messageDoc = new Message({
+        groupId,
+        messages: [newMessage],
+      });
+    } else {
+      messageDoc.messages.push(newMessage);
+    }
+  await messageDoc.save();
+
+
+  await Message.findOneAndUpdate(
+      { groupId },
+      { $push: { message: newMessage } },
+      { upsert: true, new: true }
+    );
+
+  if (global.clients && global.clients.has(groupId)) {
+      const groupClients = global.clients.get(groupId);
+      const response = {
+        type: 'receiveMessage',
+        // content: newMessage.content,
+        // content: '',
+
+        groupId,
+      senderId: userId,
+        profileImage: '',
+        image: '',
+        video: '',
+        document: '',
+        message: newMessage.message, 
+        mentions: [],
+           timestamp: Date.now(),
+
+      };
+
+      groupClients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(response));
+        }
+      });
+    }
     res.status(201).json({ message: "Kitty added successfully", data: newKitty });
-    // if (res.statusCode === 201) {
-    //   // Loop through each userId and create a wallet object for them
-    //   newGroup.userIds.forEach(async (item) => {
-    //     const wallet = new WalletModel({
-    //       userId: item.userId,
-    //       groupId: newGroup._id,
-    //       amount: contributionAmount, // The amount for this particular user
-    //       transactionType: 'Contribution', // Or dynamically set based on your needs
-    //       description: `Initial contribution for group ${newGroup._id}`
-    //     });
-    
-    //     try {
-    //       // Save the wallet object for each user
-    //       await wallet.save();
-    //       console.log(`Wallet created for user ${item.userId} in group ${newGroup._id}`);
-    //     } catch (error) {
-    //       console.error(`Error creating wallet for user ${item.userId}:`, error.message);
-    //     }
-    //   });
-    // }
+  
   } catch (err) {
     console.error("Error adding kitty", err);
     res.status(500).json({ error: "Failed to add kitty" });
