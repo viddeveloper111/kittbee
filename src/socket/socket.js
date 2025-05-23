@@ -176,7 +176,6 @@ module.exports = (wss) => {
                 ws.send(JSON.stringify({ error: 'At least one of content, image, video, document and poll options must be provided' }));
                 return;
               }
-
               const mentionedFullnames = extractMentions(content || "");
               const mentionedUsers = await UserModel.find({ fullname: { $in: mentionedFullnames } }).select("_id fullname");
               const mentionedUserIds = mentionedUsers.map(u => u._id.toString());
