@@ -38,6 +38,8 @@ const KittySchema = new mongoose.Schema({
   activityId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'activity' }],
   templateId: { type: mongoose.Schema.Types.ObjectId, ref: 'Template' },
   image: { type: String },
+  tampimage: { type: String },
+
   members: [{
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
     status: { type: String, enum: ['pending', 'approved','rejected'], default: 'pending' }

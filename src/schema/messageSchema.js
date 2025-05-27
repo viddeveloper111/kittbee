@@ -13,8 +13,10 @@ const messageArray = new Schema({
   amount: { type: Number, default: 0 }, // Store amount value
   amountType: { type: String, enum: ['Contribution', 'Expense'], default: 'Contribution' }, // Store type of amount
   name: { type: String, default: '' }, // Store name
+  timestamp: { type: Date, default: Date.now },
   message: { type: String,}, // Store name
   mentions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
+  tamp: String, 
 
 })
 

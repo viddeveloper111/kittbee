@@ -104,6 +104,7 @@ exports.addKitty = async (req, res) => {
       activityId,
       templateId,
       addressId,
+      tampimage,
       theamepoll,
       locationpoll,
       venuepoll
@@ -171,6 +172,7 @@ exports.addKitty = async (req, res) => {
       theamepoll: theamePollData,
       locationpoll: locationPollData,
       venuepoll: venuePollData,
+      tampimage
     });
 
     // Save the new Kitty to the database
@@ -188,6 +190,7 @@ exports.addKitty = async (req, res) => {
   const newMessage = {
   senderId: userId,
   message: `${sender.fullname} created a new kitty: ${newKitty.name}`,
+  tamp: tampimage,
   timestamp: Date.now(),
 };
  
@@ -210,32 +213,61 @@ exports.addKitty = async (req, res) => {
       { $push: { message: newMessage } },
       { upsert: true, new: true }
     );
+    
+    // if (global.clients && global.clients.has(groupId)) {
+    //   const groupClients = global.clients.get(groupId);
+    //   console.log(`Sending real-time update to ${groupClients.size} clients in group ${groupId}`);
+    //   const response = {
+    //     type: 'receiveMessage',
+    //     // content: newMessage.content,
+    //     // content: '',
  
-  if (global.clients && global.clients.has(groupId)) {
-      const groupClients = global.clients.get(groupId);
-      const response = {
-        type: 'receiveMessage',
-        // content: newMessage.content,
-        // content: '',
+    //     groupId,
+    //   senderId: userId,
+    //     profileImage: '',
+    //     image: '',
+    //     video: '',
+    //     document: '',
+    //     message: newMessage.message,
+    //     tamp: tampimage,
+
+    //     mentions: [],
+    //        timestamp: Date.now(),
  
-        groupId,
-      senderId: userId,
-        profileImage: '',
-        image: '',
-        video: '',
-        document: '',
-        message: newMessage.message,
-        mentions: [],
-           timestamp: Date.now(),
+    //   };
  
-      };
- 
-      groupClients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(response));
-        }
-      });
+    //   groupClients.forEach(client => {
+    //     if (client.readyState === WebSocket.OPEN) {
+    //       client.send(JSON.stringify(response));
+    //     }
+    //   });
+    // }
+
+    if (global.clients && global.clients.has(groupId)) {
+  const groupClients = global.clients.get(groupId);
+  console.log(`Clients connected in group ${groupId}:`, groupClients.size);
+
+  const response = {
+    type: 'receiveMessage',
+    groupId,
+    senderId: userId,
+    message: newMessage.message,
+    tamp: tampimage,
+    timestamp: Date.now(),
+  };
+
+  groupClients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(response));
+      console.log("Sent message to a client in group");
+    } else {
+      console.log("Client not open:", client.readyState);
     }
+  });
+} else {
+  console.log("No clients connected for group:", groupId);
+}
+
 
     
     // Send success response
