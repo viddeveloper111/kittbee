@@ -7,6 +7,8 @@ const UserModel = require('../schema/userSchema'); // Import the User schema
 module.exports = (wss) => {
   const clients = new Map();
 global.clients = clients;
+
+
   wss.on('connection', (ws) => {
     console.log('New client connected');
 

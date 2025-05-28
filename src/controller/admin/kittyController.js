@@ -89,6 +89,7 @@ const WebSocket = require('ws');
 // };
 
 exports.addKitty = async (req, res) => {
+   console.log("Received request to add kitty with body:", req.body);
   try {
     const {
       name,
@@ -175,9 +176,12 @@ exports.addKitty = async (req, res) => {
     });
 
     // Save the new Kitty to the database
+        console.log("Saving new kitty...");
+console.log ('kitty saved :', newKitty._id)
     await newKitty.save();
 
  const sender = await UserSchema.findById(userId).select('fullname');
+console.log ('Sender is  :', sender?.fullname)
  
  
   // const newMessage = {
@@ -270,7 +274,7 @@ exports.addKitty = async (req, res) => {
 
 
     
-    // Send success response
+    console.log("Kitty added successfully");
     res.status(201).json({ message: "Kitty added successfully", data: newKitty });
     
   } catch (err) {
