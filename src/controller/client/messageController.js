@@ -1,6 +1,7 @@
 const Message = require('../../schema/messageSchema');
 
 exports.createMessage = async (req, res) => {
+  console.log('create message triggered ...')
   try {
     // Destructure only groupId and senderId
     const { groupId, senderId } = req.body;
