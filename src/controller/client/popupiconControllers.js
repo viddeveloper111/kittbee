@@ -18,7 +18,7 @@ exports.addIcon = async (req, res) => {
 exports.getAllIcons = async (req, res) => {
   try {
     const icons = await Icon.find();
-    res.status(200).json({ message: 'Icons retrieved successfully', data: icons });
+    res.status(200).json({ message: 'Icons retrieved successfully!', data: icons });
   } catch (error) {
     res.status(500).json({ message: 'Failed to retrieve icons', error });
   }
