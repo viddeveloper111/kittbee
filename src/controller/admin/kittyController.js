@@ -110,7 +110,6 @@ exports.addKitty = async (req, res) => {
       venuepoll
     } = req.body;
 
-    // Validation checks
     if (!name || typeof name !== 'string') {
       return res.status(400).json({ error: "Name is required and must be a string" });
     }
@@ -208,11 +207,11 @@ exports.addKitty = async (req, res) => {
   await messageDoc.save();
  
  
-  await Message.findOneAndUpdate(
-      { groupId },
-      { $push: { message: newMessage } },
-      { upsert: true, new: true }
-    );
+  // await Message.findOneAndUpdate(
+  //     { groupId },
+  //     { $push: { message: newMessage } },
+  //     { upsert: true, new: true }
+  //   );
     
     // if (global.clients && global.clients.has(groupId)) {
     //   const groupClients = global.clients.get(groupId);
@@ -252,7 +251,8 @@ exports.addKitty = async (req, res) => {
     groupId,
     senderId: userId,
     message: newMessage.message,
-    tamp: tampimage,
+    // tamp: tampimage,
+    tamp: newMessage.tamp,
     timestamp: Date.now(),
   };
 
@@ -272,26 +272,7 @@ exports.addKitty = async (req, res) => {
     
     // Send success response
     res.status(201).json({ message: "Kitty added successfully", data: newKitty });
-    // if (res.statusCode === 201) {
-    //   // Loop through each userId and create a wallet object for them
-    //   newGroup.userIds.forEach(async (item) => {
-    //     const wallet = new WalletModel({
-    //       userId: item.userId,
-    //       groupId: newGroup._id,
-    //       amount: contributionAmount, // The amount for this particular user
-    //       transactionType: 'Contribution', // Or dynamically set based on your needs
-    //       description: `Initial contribution for group ${newGroup._id}`
-    //     });
     
-    //     try {
-    //       // Save the wallet object for each user
-    //       await wallet.save();
-    //       console.log(`Wallet created for user ${item.userId} in group ${newGroup._id}`);
-    //     } catch (error) {
-    //       console.error(`Error creating wallet for user ${item.userId}:`, error.message);
-    //     }
-    //   });
-    // }
   } catch (err) {
     console.error("Error adding kitty", err);
     res.status(500).json({ error: "Failed to add kitty" });

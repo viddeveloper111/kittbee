@@ -81,12 +81,11 @@ global.clients = clients;
 if (message && message.trim() !== '') {
       response.message = message;
     }
-              // Broadcast the new message to everyone in the group except the sender
               const groupClients = clients.get(groupId);
               if (groupClients) {
                 groupClients.forEach(client => {
                   if (client.readyState === WebSocket.OPEN && client !== ws) {
-                    client.send(JSON.stringify(response)); // Send the message to each client except the sender
+                    client.send(JSON.stringify(response)); 
                   }
                 });
               }
