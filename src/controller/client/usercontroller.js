@@ -86,7 +86,7 @@ exports.adduserInfo = async (req, res) => {
       emergencyNumber,
       specificintrests,
       username,
-      about,
+      about,  
       sociallinks,
       location
       
